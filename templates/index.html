@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+
+
+
+<div style="margin: 0 auto;width:500px; ">
+<h2>Ovaas2</h2>
+    {% if user.is_authenticated %}
+        <div>
+            <a>user:</a><em>{{ username }}</em>
+            <span>|</span>
+            <a href="{% url 'ovaas:logout' %}">logout</a>
+        </div>
+        <div >
+            <table>
+                <thead>
+                <tr>
+                    <th scope="col">username</th>
+                    <th scope="col">email</th>
+                    <th scope="col">creat time</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for data in users_data %}
+                    <tr>
+                        <td>{{ data.username }}</td>
+                        <td>{{ data.email }}</td>
+                        <td>{{ data.create_time }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+    {% else %}
+        <div>
+            <a href="{% url 'ovaas:register' %}">register</a>
+        </div>
+        <br>
+        <div>
+            <form method="post" id="form">
+                {% csrf_token %}
+                <input type="text" name="username" id="username">
+                <input type="password" name="pwd" id="pwd" placeholder="password">
+                <button type="submit">login</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

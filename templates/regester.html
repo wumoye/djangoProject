@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+</head>
+<body>
+  <div style="margin: 0 auto;width:500px; ">
+                <div >
+                    <a href="{% url 'ovaas:login' %}">login</a>
+                </div>
+                <div >
+                    <form action="{% url 'ovaas:register' %}" method="post" id="formRegister">
+                        {% csrf_token %}
+                        <div >
+                            <input type="text" class="form-control" name="username" id="username"
+                                   aria-describedby="emailHelp" value="{{ username }}"
+                                   placeholder="ユーザー名">
+                        </div>
+                        <div >
+                            <input type="password" class="form-control" name="pwd" id="pwd"
+                                   placeholder="パスワード">
+                        </div>
+                        <div >
+                            <input type="password" class="form-control" name="cpwd" id="cpwd"
+                                   placeholder="も一度パスワード">
+                        </div>
+                        <div >
+                            <input type="email" class="form-control" name="email" id="email" value="{{ email }}"
+                                   aria-describedby="emailHelp"
+                                   placeholder="メールアドレス">
+                        </div>
+                        <button type="submit" id="register" class="btn btn-primary">signup</button>
+                    </form>
+
+                </div>
+            </div>
+</body>
+</html>
