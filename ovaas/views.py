@@ -30,7 +30,7 @@ def get_response_json_dict(token, state=200, message="Success"):
     return ret
 
 
-class LoginView(View):
+class PasswordAuthentication(View):
 
     def get(self, request):
         pass

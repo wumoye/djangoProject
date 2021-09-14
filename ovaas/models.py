@@ -8,6 +8,6 @@ from db.base_model import BaseModel
 class User(AbstractUser,BaseModel):
 
     class Meta:
-        db_table = 'ovaas2_user'
+        db_table = 'UserInfo'
         verbose_name = 'user'
         verbose_name_plural = verbose_name
