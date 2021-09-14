@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'ovaas2-test'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_ea900fb247f34deb87fe97217eb212ce }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_173d0ef311b94d1fb9a085f06d52b13a }}
