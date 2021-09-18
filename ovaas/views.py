@@ -37,7 +37,7 @@ class PasswordAuthentication(View):
 
     def post(self, request):
         received_data = json.loads(request.body.decode('utf-8'))
-        username = 'Ouchiyama'
+        username = received_data['user']
         password = received_data['password']
 
         user = authenticate(request, username=username, password=password)
@@ -52,4 +52,4 @@ class PasswordAuthentication(View):
                     get_response_json_dict(token='', state=-1, message="User not activated"))
         else:
             return JsonResponse(
-                get_response_json_dict(token='', state=-1, message="Invalid username or password"))
+                get_response_json_dict(token='', state=504, message="Invalid username or password"))

@@ -81,17 +81,17 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ovaas2_test',
-        'USER': 'ovaas_test_user@ovaas2',
-        'PASSWORD': 'password',
-        'HOST': 'ovaas2.mysql.database.azure.com',
-        'PORT': 3306,
-        'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ovaas2_test',
+#         'USER': 'ovaas_test_user@ovaas2',
+#         'PASSWORD': 'password',
+#         'HOST': 'ovaas2.mysql.database.azure.com',
+#         'PORT': 3306,
+#         'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -133,5 +133,8 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
 AUTH_USER_MODEL = 'ovaas.User'
 LOGIN_URL = '/login'
