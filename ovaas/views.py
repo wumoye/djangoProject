@@ -33,7 +33,23 @@ def get_response_json_dict(token, state=200, message="Success"):
 class PasswordAuthentication(View):
 
     def get(self, request):
-        pass
+
+        username = 'lee'
+        password = '111'
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                token = generate_jwt_token(user.username)
+                return JsonResponse(get_response_json_dict(token=token))
+            else:
+                return JsonResponse(
+                    get_response_json_dict(token='', state=-1, message="User not activated"))
+        else:
+            return JsonResponse(
+                get_response_json_dict(token='', state=504, message="Invalid username or password"))
 
     def post(self, request):
         received_data = json.loads(request.body.decode('utf-8'))
