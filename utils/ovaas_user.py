@@ -9,37 +9,19 @@ from django.db import models
 from django.utils.crypto import get_random_string, salted_hmac
 from django.utils.translation import gettext_lazy as _
 
-
-class MyUserManager(models.Manager):
-
-    def make_random_password(self, length=10,
-                             allowed_chars='abcdefghjkmnpqrstuvwxyz'
-                                           'ABCDEFGHJKLMNPQRSTUVWXYZ'
-                                           '23456789'):
-        """
-        Generate a random password with the given length and given
-        allowed_chars. The default value of allowed_chars does not have "I" or
-        "O" or letters and digits that look similar -- just to avoid confusion.
-        """
-        return get_random_string(length, allowed_chars)
-
-    def get_by_natural_key(self, username):
-        return self.get(**{self.model.USERNAME_FIELD: username})
-
-
-class MyAbstractBaseUser(models.Model):
+class ReAbstractBaseUser(models.Model):
     password = models.CharField(_('password'), max_length=128)
+
+    is_active = True
+
     REQUIRED_FIELDS = []
+
     # Stores the raw password if set_password() is called so that it can
     # be passed to password_changed() after the model is saved.
     _password = None
 
     class Meta:
         abstract = True
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
-        self.USERNAME_FIELD = None
 
     def __str__(self):
         return self.get_username()
@@ -58,7 +40,7 @@ class MyAbstractBaseUser(models.Model):
         setattr(self, self.USERNAME_FIELD, self.normalize_username(self.get_username()))
 
     def natural_key(self):
-        return self.get_username(),
+        return (self.get_username(),)
 
     @property
     def is_anonymous(self):
@@ -122,6 +104,13 @@ class MyAbstractBaseUser(models.Model):
             # algorithm='sha256',
             algorithm=settings.DEFAULT_HASHING_ALGORITHM,
         ).hexdigest()
+
+    @classmethod
+    def get_email_field_name(cls):
+        try:
+            return cls.EMAIL_FIELD
+        except AttributeError:
+            return 'email'
 
     @classmethod
     def normalize_username(cls, username):

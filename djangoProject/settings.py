@@ -81,17 +81,18 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ovaas2_test',
-        'USER': 'ovaas_test_user@ovaas2',
-        'PASSWORD': 'password',
-        'HOST': 'ovaas2.mysql.database.azure.com',
-        'PORT': 3306,
-        # 'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ovaas2_test',
+#         'USER': 'ovaas_test_user@ovaas2',
+#         'PASSWORD': 'password',
+#         'HOST': 'ovaas2.mysql.database.azure.com',
+#         'PORT': 3306,
+#         # 'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
+#     }
+# }
+
 hostname = os.environ['DBHOST']
 DATABASES = {
     'default': {
@@ -157,7 +158,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'ovaas.User'
 LOGIN_URL = '/login'
 
-# # Session
+# # redis
 # CACHES = {
 #     "default": {
 #         "BACKEND": "django_redis.cache.RedisCache",
@@ -174,8 +175,26 @@ LOGIN_URL = '/login'
 #         }
 #     }
 # }
-#
-# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-# SESSION_CACHE_ALIAS = 'session'
-#
-# SESSION_COOKIE_AGE = 60 * 60 * 24
+# redis
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "session": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ['REDIS_LOCATION'],
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": os.environ['REDIS_PASS'],
+        }
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'session'
+
+SESSION_COOKIE_AGE = 60*60*24
