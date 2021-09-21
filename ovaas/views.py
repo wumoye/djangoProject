@@ -1,55 +1,41 @@
 import json
-from datetime import datetime, timedelta
-
-from django.conf import settings
 from django.contrib.auth import login, authenticate
-
 from django.http import JsonResponse
 from django.views import View
-import jwt
 
-
-def generate_jwt_token(username):
-    token = jwt.encode({
-        'exp': datetime.utcnow() + timedelta(days=1),
-        'iat': datetime.utcnow(),
-        'data': {
-            'username': username
-        }
-    }, settings.SECRET_KEY, algorithm='HS256')
-
-    return token.encode('utf-8').decode('utf-8')
-
-
-def get_response_json_dict(token, state=200, message="Success"):
-    ret = {
-        'state': state,
-        'message': message,
-        'access_token': token
-    }
-    return ret
+from ovaas.models import User
+from utils.token_and_session import generate_jwt_token, get_response_json_dict
 
 
 class PasswordAuthentication(View):
 
     def get(self, request):
-
+        #
         username = 'lee'
         password = '111'
 
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                token = generate_jwt_token(user.username)
-                return JsonResponse(get_response_json_dict(token=token))
-            else:
-                return JsonResponse(
-                    get_response_json_dict(token='', state=-1, message="User not activated"))
+        user_in_database = User.objects.filter(username=username).exists()
+        if not user_in_database:
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+            return JsonResponse(get_response_json_dict(token='ok', state=200, message="ok"))
         else:
-            return JsonResponse(
-                get_response_json_dict(token='', state=504, message="Invalid username or password"))
+            print(f'user exists')
+
+            return JsonResponse(get_response_json_dict(token='exists', state=504, message="exists"))
+        #
+        # user = authenticate(request, username=username, password=password)
+        #
+        # if user is not None:
+        #
+        #         login(request, user)
+        #         token = generate_jwt_token(user.username)
+        #         return JsonResponse(get_response_json_dict(token=token))
+        #
+        # else:
+        #     return JsonResponse(
+        #         get_response_json_dict(token='', state=504, message="Invalid username or password"))
+
 
     def post(self, request):
         received_data = json.loads(request.body.decode('utf-8'))
@@ -59,13 +45,12 @@ class PasswordAuthentication(View):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            if user.is_active:
-                login(request, user)
-                token = generate_jwt_token(user.username)
-                return JsonResponse(get_response_json_dict(token=token))
-            else:
-                return JsonResponse(
-                    get_response_json_dict(token='', state=-1, message="User not activated"))
+            login(request, user)
+
+            token = generate_jwt_token(user.username)
+
+            return JsonResponse(get_response_json_dict(token=token))
+
         else:
             return JsonResponse(
                 get_response_json_dict(token='', state=504, message="Invalid username or password"))

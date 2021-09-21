@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-!ma-(s6yv@sswb*ury3mp+$$r8y-9u2wkbzt51#d#)72cov&=p
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['*']
-
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
 
 # Application definition
 
@@ -81,18 +81,38 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ovaas2_test',
+        'USER': 'ovaas_test_user@ovaas2',
+        'PASSWORD': 'password',
+        'HOST': 'ovaas2.mysql.database.azure.com',
+        'PORT': 3306,
+        # 'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
+    }
+}
+hostname = os.environ['DBHOST']
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ['DBNAME'],
+        'HOST': hostname + ".mysql.database.azure.com",
+        'USER': os.environ['DBUSER'] + "@" + hostname,
+        'PASSWORD': os.environ['DBPASS']
+    }
+}
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'ovaas2_test',
-#         'USER': 'ovaas_test_user@ovaas2',
-#         'PASSWORD': 'password',
-#         'HOST': 'ovaas2.mysql.database.azure.com',
-#         'PORT': 3306,
-#         'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
+#         'USER': 'li',
+#         'PASSWORD': '123123',
+#         'HOST': 'localhost',
+#
 #     }
 # }
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -134,7 +154,28 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
 AUTH_USER_MODEL = 'ovaas.User'
 LOGIN_URL = '/login'
+
+# # Session
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     },
+#     "session": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/3",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
+#
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# SESSION_CACHE_ALIAS = 'session'
+#
+# SESSION_COOKIE_AGE = 60 * 60 * 24
