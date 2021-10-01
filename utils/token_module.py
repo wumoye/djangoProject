@@ -1,14 +1,8 @@
 import jwt
+import json
 from django.conf import settings
-
-
-def get_response_json_dict(token='', status_code=200, message="Success"):
-    ret = {
-        'status_code': status_code,
-        'message': message,
-        'access_token': token
-    }
-    return ret
+from django_redis import get_redis_connection
+from datetime import datetime, timedelta
 
 
 def get_data_from_token(token):
@@ -32,3 +26,19 @@ def get_data_from_token(token):
         ret['message'] = 'Can not get user object'
 
     return ret
+
+
+def set_token_in_redis(key, val):
+    con = get_redis_connection('session')
+    res = con.set(key, val, 60 * 60 * 24)
+
+    return res
+
+
+def check_token_in_redis(key):
+    con = get_redis_connection('session')
+    val = con.get(key)
+    if not val:
+        return None
+    else:
+        return val.decode("utf-8")

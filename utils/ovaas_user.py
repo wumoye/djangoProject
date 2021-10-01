@@ -9,6 +9,7 @@ from django.db import models
 from django.utils.crypto import get_random_string, salted_hmac
 from django.utils.translation import gettext_lazy as _
 
+
 class ReAbstractBaseUser(models.Model):
     password = models.CharField(_('password'), max_length=128)
 

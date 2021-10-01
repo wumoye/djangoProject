@@ -24,9 +24,7 @@ SECRET_KEY = 'django-insecure-!ma-(s6yv@sswb*ury3mp+$$r8y-9u2wkbzt51#d#)72cov&=p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -75,45 +73,19 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ovaas2_test',
-#         'USER': 'ovaas_test_user@ovaas2',
-#         'PASSWORD': 'password',
-#         'HOST': 'ovaas2.mysql.database.azure.com',
-#         'PORT': 3306,
-#         # 'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
-#     }
-# }
 
-hostname = os.environ['DBHOST']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['DBNAME'],
-        'HOST': hostname + ".mysql.database.azure.com",
-        'USER': os.environ['DBUSER'] + "@" + hostname,
-        'PASSWORD': os.environ['DBPASS']
+        'NAME': 'name',
+        'USER': 'user',
+        'PASSWORD': 'password',
+        'HOST': 'ovaas2.mysql.database.azure.com',
+        'PORT': 3306,
+        # 'OPTIONS': {'ssl': {'ca': BASE_DIR/'db/BaltimoreCyberTrustRoot.crt.pem'}}
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ovaas2_test',
-#         'USER': 'li',
-#         'PASSWORD': '123123',
-#         'HOST': 'localhost',
-#
-#     }
-# }
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -158,23 +130,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'ovaas.User'
 LOGIN_URL = '/login'
 
-# # redis
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://127.0.0.1:6379/1",
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         }
-#     },
-#     "session": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://127.0.0.1:6379/3",
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         }
-#     }
-# }
 # redis
 CACHES = {
     "default": {
@@ -186,10 +141,9 @@ CACHES = {
     },
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ['REDIS_LOCATION'],
+        "LOCATION": "redis://127.0.0.1:6379/3",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": os.environ['REDIS_PASS'],
         }
     }
 }
@@ -197,4 +151,4 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'session'
 
-SESSION_COOKIE_AGE = 60*60*24
+SESSION_COOKIE_AGE = 60 * 60 * 24

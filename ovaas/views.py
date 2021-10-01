@@ -1,19 +1,19 @@
 import json
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
+from django.db import models
 from django.http import JsonResponse
 from django.views import View
 from django_redis import get_redis_connection
 
 from ovaas.models import User
-from utils.session_module import set_session, get_session
-from utils.token_module import get_response_json_dict, get_data_from_token
+from utils.token_module import *
 
 
 class PasswordAuthentication(View):
 
     def get(self, request):
         # test code----start
-        # username = 'lee'
+        # username = 'lee2'
         # password = '111'
         #
         # user_in_database = User.objects.filter(username=username).exists()
@@ -29,11 +29,28 @@ class PasswordAuthentication(View):
         # dict = get_data_from_token()
         # username = request.session.get('lee')
         # password = request.session.get('password')
-
-        # res = get_session(username)
-        #
-        # return JsonResponse(get_response_json_dict(status_code=0, message=res))
+        # token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzI3NTYwMjIsImlhdCI6MTYzMjY2OTYyMiwiZGF0YSI6eyJ1c2VybmFtZSI6ImxlZTIifX0.KKywrzGhmJCQ7On3sl6w5vzQVlaF7rqzx-FCClmHApw'
+        # token_false = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzI3NTYwMjIsImlhdCI6MTYzMjY2OTYyMiwiZGF0YSI6eyJ1c1VybmFtZSI6ImxlZTIifX0.KKywrzGhmJCQ7On3sl6w5vzQVlaF7rqzx-FCClmHApw'
+        # token = token_false
+        # res = check_token_in_redis(token)
+        # message = f"res: {res}."
+        # status_code = 200
+        # if not res:
+        #     message += "Invalid token"
+        #     status_code = 412
+        # else:
+        #     data = get_data_from_token(token)
+        #     if data['username'] == res:
+        #         message += f"The token is user. username:{data}"
+        #     else:
+        #         message += f"Invalid token. username:{data}"
+        #         status_code = 412
+        # #
+        # return JsonResponse(get_response_json_dict(token, status_code=status_code, message=message))
         # test code----end
+
+        # sessions = request.session.get('user', "")
+        # return JsonResponse({'session': sessions})
         pass
 
     def post(self, request):
@@ -43,22 +60,22 @@ class PasswordAuthentication(View):
         token = ''
         user_in_database = User.objects.filter(username=username).exists()
         if not user_in_database:
-            return JsonResponse(get_response_json_dict(token=token, status_code=401, message="User Does not exist"))
+            return JsonResponse({'401': 'User Does not exist'})
 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request, user)
 
             token = user.token
-            val = {'is_login': True, 'user': username}
-            res = set_session(username, val)
+            request.session['user'] = token
+            login(request, user)
+            # session_id = request.session.get('user', '')
 
-            return JsonResponse(
-                get_response_json_dict(token=token, status_code=200, message=f"User exist,Set session {res}"))
+            # res = set_token_in_redis(token, username)
+            # res = None
+            return JsonResponse({'access_token': token})
         else:
-            return JsonResponse(
-                get_response_json_dict(token='', status_code=402, message="Invalid username or password"))
+            return JsonResponse({'402': 'Invalid username or password'})
 
         # test code----start
         # val = {'is_login': 'true', 'user': username}

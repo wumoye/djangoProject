@@ -3,12 +3,10 @@ from datetime import datetime, timedelta
 import jwt
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import UserManager
 
 from utils.ovaas_user import ReAbstractBaseUser
 from django.db import models
-from db.base_model import BaseModel
 
 
 class MyUserManager(UserManager):
@@ -37,9 +35,9 @@ class User(ReAbstractBaseUser):
 
     @property
     def token(self):
-        return self._generate_jwt_token()
+        return self.generate_jwt_token()
 
-    def _generate_jwt_token(self):
+    def generate_jwt_token(self):
         token = jwt.encode({
             'exp': datetime.utcnow() + timedelta(days=1),
             'iat': datetime.utcnow(),
