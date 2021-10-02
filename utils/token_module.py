@@ -1,11 +1,9 @@
 import jwt
-import json
 from django.conf import settings
 from django_redis import get_redis_connection
-from datetime import datetime, timedelta
 
 
-def get_data_from_token(token):
+def decrypt(token):
     ret = {
         'username': '',
         'message': 'Success',
@@ -28,17 +26,23 @@ def get_data_from_token(token):
     return ret
 
 
-def set_token_in_redis(key, val):
-    con = get_redis_connection('session')
-    res = con.set(key, val, 60 * 60 * 24)
+def get_username(token):
+    dic_data = decrypt(token)
+    username = dic_data['username']
+    return username
 
-    return res
 
-
-def check_token_in_redis(key):
-    con = get_redis_connection('session')
-    val = con.get(key)
-    if not val:
-        return None
-    else:
-        return val.decode("utf-8")
+# def set_token_in_redis(key, val, time_out=60 * 60 * 24):
+#     con = get_redis_connection('session')
+#     res = con.set(key, val, time_out)
+#
+#     return res
+#
+#
+# def check_token(token):
+#     con = get_redis_connection('session')
+#     username = get_username(token)
+#     last_token = con.get(username)
+#     if last_token:
+#         return last_token == token
+#     return False
